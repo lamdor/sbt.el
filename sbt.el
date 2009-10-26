@@ -42,26 +42,22 @@ see the file `COPYING'.  If not, write to the Free Software Foundation, Inc.,
   "Buffer name for sbt"
   :type 'string :group 'sbt)
 
-(defcustom sbt-scala-compile-error-regex '("^\\[error\\] \\([.a-zA-Z0-9/-]+[.]scala\\):\\([0-9]+\\):" 1 2 nil 2 nil)
-  "Regex to match for errors on"
-  :type 'list :group 'sbt)
-
 (defun sbt ()
   "Launch the sbt shell."
   (interactive)
   (let ((buffer (shell sbt-build-buffer-name)))
     (set (make-local-variable 'compilation-error-regexp-alist)
-         '(scala-compile-error-regex))
+         '(("^\\[error\\] \\([_.a-zA-Z0-9/-]+[.]scala\\):\\([0-9]+\\):" 1 2 nil 2 nil)))
     (set (make-local-variable 'compilation-mode-font-lock-keywords)
          '(("^\\[error\\] Error running compile:"
-			   (0 compilation-error-face))
-			  ("^\\[warn\\][^\n]*"
-			   (0 compilation-warning-face))
-			  ("^\\(\\[info\\]\\)\\([^\n]*\\)"
-			   (0 compilation-info-face)
-			   (1 compilation-line-face))
-			  ("^\\[success\\][^\n]*"
-			   (0 compilation-info-face))))
+            (0 compilation-error-face))
+           ("^\\[warn\\][^\n]*"
+            (0 compilation-warning-face))
+           ("^\\(\\[info\\]\\)\\([^\n]*\\)"
+            (0 compilation-info-face)
+            (1 compilation-line-face))
+           ("^\\[success\\][^\n]*"
+            (0 compilation-info-face))))
     (set (make-local-variable 'comint-prompt-read-only) t)
     (set (make-local-variable 'compilation-auto-jump-to-first-error) t)
     (set (make-local-variable 'comint-scroll-to-bottom-on-output) t)
@@ -95,9 +91,9 @@ see the file `COPYING'.  If not, write to the Free Software Foundation, Inc.,
   "Move up the directory tree for the current buffer until root or a directory with a project/build.properities is found."
   (interactive)
   (let ((path default-directory))
-      (while (and (not (sbt-project-dir-p path))
-		  (not (sbt-at-root path)))
-	(setf path (file-truename (sbt-parent-path path))))
-      path))
+    (while (and (not (sbt-project-dir-p path))
+                (not (sbt-at-root path)))
+      (setf path (file-truename (sbt-parent-path path))))
+    path))
 
 (provide 'sbt)
