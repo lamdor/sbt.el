@@ -3,6 +3,7 @@
 (eval-when-compile (require 'cl))
 (require 'tool-bar)
 (require 'compile)
+(require 'comint)
 
 (defgroup sbt nil
   "Run SBT REPL as inferior of Emacs, parse error messages."
@@ -12,9 +13,9 @@
 (defconst sbt-copyright    "Copyright (C) 2008 Raymond Paul Racine")
 (defconst sbt-copyright-2  "Portions Copyright (C) Free Software Foundation")
 
-(defconst sbt-version      "0.02")
-(defconst sbt-author-name  "Raymond Racine")
-(defconst sbt-author-email "ray.racine@gamail.com")
+(defconst sbt-version      "0.03-SNAPSHOT")
+(defconst sbt-authors-name  '("Luke Amdor" "Raymond Racine"))
+(defconst sbt-authors-email '("luke.amdor@gmail.com" "ray.racine@gamail.com"))
 
 (defconst sbt-legal-notice
   "This is free software; you can redistribute it and/or modify it under the
@@ -37,29 +38,22 @@ see the file `COPYING'.  If not, write to the Free Software Foundation, Inc.,
   :type 'string
   :group 'sbt)
 
-(defun sbt-build-buffer-name (mode)
- "*Scala Build Tool*")
+(defcustom sbt-build-buffer-name "*Scala Build Tool*"
+  "Buffer name for sbt"
+  :type 'string :group 'sbt)
 
-(defun sbt-shell ()
+(defcustom sbt-scala-compile-error-regex '("^\\[error\\] \\([.a-zA-Z0-9/-]+[.]scala\\):\\([0-9]+\\):" 1 2 nil 2 nil)
+  "Regex to match for errors on"
+  :type 'list :group 'sbt)
+
+(defun sbt ()
   "Launch the sbt shell."
   (interactive)
-  (compile (concat "cd " (sbt-find-path-to-project) "; sbt") t)
-  (pop-to-buffer (sbt-build-buffer-name nil))
-  (end-of-buffer))
-
-(defun sbt-clear ()
-  "Clear (erase) the SBT buffer."
-  (interactive)
-  (with-current-buffer (sbt-build-buffer-name nil)
-    (let ((inhibit-read-only t))
-      (erase-buffer))))
-
-(customize-set-variable 'scala-compile-error-regex
-			'("^\\[error\\] \\([.a-zA-Z0-9/-]+[.]scala\\):\\([0-9]+\\):" 1 2 nil 2 nil))
-(customize-set-variable 'compilation-buffer-name-function 'sbt-build-buffer-name)
-(customize-set-variable 'compilation-error-regexp-alist (list scala-compile-error-regex))
-(customize-set-variable 'compilation-mode-font-lock-keywords
-			'(("^\\[error\\] Error running compile:"
+  (let ((buffer (shell sbt-build-buffer-name)))
+    (set (make-local-variable 'compilation-error-regexp-alist)
+         '(scala-compile-error-regex))
+    (set (make-local-variable 'compilation-mode-font-lock-keywords)
+         '(("^\\[error\\] Error running compile:"
 			   (0 compilation-error-face))
 			  ("^\\[warn\\][^\n]*"
 			   (0 compilation-warning-face))
@@ -68,15 +62,18 @@ see the file `COPYING'.  If not, write to the Free Software Foundation, Inc.,
 			   (1 compilation-line-face))
 			  ("^\\[success\\][^\n]*"
 			   (0 compilation-info-face))))
+    (set (make-local-variable 'comint-prompt-read-only) t)
+    (set (make-local-variable 'compilation-auto-jump-to-first-error) t)
+    (set (make-local-variable 'comint-scroll-to-bottom-on-output) t)
+    (compilation-shell-minor-mode t)
+    (comint-send-string buffer (concat "cd " (sbt-find-path-to-project) "; sbt\n"))))
 
-(customize-set-variable 'comint-prompt-read-only t)
-(customize-set-variable 'compilation-buffer-name-function
-			'sbt-build-buffer-name)
-(customize-set-variable 'compilation-error-regexp-alist
-			(list scala-compile-error-regex))
-(set 'compilation-auto-jump-to-first-error t)
-
-(ansi-color-for-comint-mode-on)
+(defun sbt-clear ()
+  "Clear (erase) the SBT buffer."
+  (interactive)
+  (with-current-buffer (sbt-build-buffer-name nil)
+    (let ((inhibit-read-only t))
+      (erase-buffer))))
 
 ;; Locate the project root directory from the source buffer location.
 
@@ -97,9 +94,10 @@ see the file `COPYING'.  If not, write to the Free Software Foundation, Inc.,
 (defun sbt-find-path-to-project ()
   "Move up the directory tree for the current buffer until root or a directory with a project/build.properities is found."
   (interactive)
-  (let ((fn (buffer-file-name)))
-    (let ((path (file-name-directory fn)))
+  (let ((path default-directory))
       (while (and (not (sbt-project-dir-p path))
 		  (not (sbt-at-root path)))
 	(setf path (file-truename (sbt-parent-path path))))
-      path)))
+      path))
+
+(provide 'sbt)
