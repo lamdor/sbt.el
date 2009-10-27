@@ -61,8 +61,18 @@ see the file `COPYING'.  If not, write to the Free Software Foundation, Inc.,
     (set (make-local-variable 'comint-prompt-read-only) t)
     (set (make-local-variable 'compilation-auto-jump-to-first-error) t)
     (set (make-local-variable 'comint-scroll-to-bottom-on-output) t)
+    (local-set-key (kbd "C-c C-a") 'sbt-switch)
     (compilation-shell-minor-mode t)
     (comint-send-string buffer (concat "cd " (sbt-find-path-to-project) "; sbt\n"))))
+
+(defun sbt-switch ()
+  "Switch to the sbt shell (create if necessary) if or if already there, back"
+  (interactive)
+  (if (equal sbt-build-buffer-name (buffer-name))
+      (switch-to-buffer (other-buffer))
+    (if (get-buffer sbt-build-buffer-name)
+        (switch-to-buffer sbt-build-buffer-name)
+      (sbt))))
 
 (defun sbt-clear ()
   "Clear (erase) the SBT buffer."
