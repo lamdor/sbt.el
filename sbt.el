@@ -63,7 +63,7 @@ see the file `COPYING'.  If not, write to the Free Software Foundation, Inc.,
     (set (make-local-variable 'comint-scroll-to-bottom-on-output) t)
     (local-set-key (kbd "C-c C-a") 'sbt-switch)
     (compilation-shell-minor-mode t)
-    (comint-send-string buffer (concat "cd " (sbt-find-path-to-project) "; sbt\n"))))
+    (comint-send-string buffer (concat "cd " (sbt-find-path-to-project) "\n sbt\n"))))
 
 (defun sbt-switch ()
   "Switch to the sbt shell (create if necessary) if or if already there, back"
