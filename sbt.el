@@ -58,7 +58,6 @@ see the file `COPYING'.  If not, write to the Free Software Foundation, Inc.,
             (1 compilation-line-face))
            ("^\\[success\\][^\n]*"
             (0 compilation-info-face))))
-    (set (make-local-variable 'comint-prompt-read-only) t)
     (set (make-local-variable 'compilation-auto-jump-to-first-error) t)
     (set (make-local-variable 'comint-scroll-to-bottom-on-output) t)
     (local-set-key (kbd "C-c C-a") 'sbt-switch)
