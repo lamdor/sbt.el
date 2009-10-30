@@ -42,6 +42,31 @@ see the file `COPYING'.  If not, write to the Free Software Foundation, Inc.,
   "Buffer name for sbt"
   :type 'string :group 'sbt)
 
+(defcustom sbt-use-ui nil
+  "Use unit-test to show failure/success in mode line"
+  :group 'sbt
+  :type 'boolean)
+
+(if (and sbt-use-ui (require 'unit-test nil t))
+    (progn
+      (defun sbt-update-ui (status)
+        (message "sbt-update-ui with \"%s\"" status)
+        (mapcar (lambda (buffer)
+                  (with-current-buffer buffer
+                    (if (eq status 'quit)
+                        (show-test-none)
+                      (show-test-status status))))
+                (remove-if 'minibufferp (buffer-list))))))
+
+(defun sbt-process-output (output)
+  (let ((cleaned-output (replace-regexp-in-string ansi-color-regexp "" output)))
+    (if sbt-use-ui
+        (cond
+         ((string-match "\\[info\\] == test-start ==" cleaned-output) (sbt-update-ui 'running))
+         ((string-match "\\[error\\] " cleaned-output) (sbt-update-ui 'failed))
+         ((string-match "\\[success\\] " cleaned-output) (sbt-update-ui 'passed))
+         ((string-match "\\[info\\] Total session time" cleaned-output) (sbt-update-ui 'quit))))))
+
 (defun sbt ()
   "Launch the sbt shell."
   (interactive)
@@ -60,6 +85,9 @@ see the file `COPYING'.  If not, write to the Free Software Foundation, Inc.,
             (0 compilation-info-face))))
     (set (make-local-variable 'compilation-auto-jump-to-first-error) t)
     (set (make-local-variable 'comint-scroll-to-bottom-on-output) t)
+    (set (make-local-variable 'comint-output-filter-functions) '(sbt-process-output
+                                                                 ansi-color-process-output
+                                                                 comint-postoutput-scroll-to-bottom))
     (local-set-key (kbd "C-c C-a") 'sbt-switch)
     (compilation-shell-minor-mode t)
     (comint-send-string buffer (concat "cd " (sbt-find-path-to-project) "\n sbt\n"))))
