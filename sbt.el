@@ -50,7 +50,6 @@ see the file `COPYING'.  If not, write to the Free Software Foundation, Inc.,
 (if (and sbt-use-ui (require 'unit-test nil t))
     (progn
       (defun sbt-update-ui (status)
-        (message "sbt-update-ui with \"%s\"" status)
         (mapcar (lambda (buffer)
                   (with-current-buffer buffer
                     (if (eq status 'quit)
