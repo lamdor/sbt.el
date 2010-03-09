@@ -38,7 +38,7 @@ see the file `COPYING'.  If not, write to the Free Software Foundation, Inc.,
   :type 'string
   :group 'sbt)
 
-(defcustom sbt-build-buffer-name "*Scala Build Tool*"
+(defcustom sbt-build-buffer-name "*Simple Build Tool*"
   "Buffer name for sbt"
   :type 'string :group 'sbt)
 
