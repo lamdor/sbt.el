@@ -22,6 +22,7 @@ Add to your emacs init.el/initialization or el-get configuration.
 
   1. Clone somewhere onto your emacs load-path.
   2. Add to your emacs init.el or initialization.
+
 ```lisp
 (autoload 'turn-on-sbt-mode "sbt" "" t)
 (add-hook 'scala-mode 'turn-on-sbt-mode)
