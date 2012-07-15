@@ -99,12 +99,28 @@ see the file `COPYING'.  If not, write to the Free Software Foundation, Inc.,
         (switch-to-buffer (other-buffer))
       (switch-to-buffer sbt-buffer))))
 
-;; TODO: keymappings to send test/compile etc
+(defun sbt-command (command)
+  (let ((buffer (sbt-find-or-create-buffer)))
+    (switch-to-buffer buffer)
+    (comint-send-string (buffer-name buffer) (concat command "\n"))))
+
+(defun sbt-compile ()
+  "Switch to sbt buffer and run compile"
+  (interactive)
+  (sbt-command "compile"))
+
+(defun sbt-test ()
+  "Switch to sbt buffer and run compile"
+  (interactive)
+  (sbt-command "test"))
+
 ;; TODO: keymapping to run current test
 
 (defvar sbt-minor-keymap
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-c s s") 'sbt-switch)
+    (define-key map (kbd "C-c s c") 'sbt-compile)
+    (define-key map (kbd "C-c s t") 'sbt-test)
     map))
 
 (define-minor-mode sbt-minor-mode "SBT interaction"
