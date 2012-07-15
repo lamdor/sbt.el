@@ -6,6 +6,8 @@
 (require 'comint)
 (require 'unit-test nil t)
 
+;; TODO: autolaods
+
 (defgroup sbt nil
   "Run SBT REPL as inferior of Emacs, parse error messages."
   :group 'tools
@@ -114,13 +116,33 @@ see the file `COPYING'.  If not, write to the Free Software Foundation, Inc.,
   (interactive)
   (sbt-command "test"))
 
-;; TODO: keymapping to run current test
+(defun sbt-current-test-in-buffer ()
+  (save-excursion
+    (goto-char (point-min))
+    (let* ((pkg-name (progn
+                       (re-search-forward "package ")
+                       (filter-buffer-substring (point) (point-at-eol))))
+           (test-name (progn
+                        (re-search-forward "object ")
+                        (filter-buffer-substring
+                         (point)
+                         (progn
+                           (re-search-forward " ")
+                           (forward-char -1)
+                           (point))))))
+      (concat pkg-name "." test-name))))
+
+(defun sbt-test-only-current-test ()
+  "Run test-only for the test in the current buffer"
+  (interactive)
+  (sbt-command (concat "test-only " (sbt-current-test-in-buffer))))
 
 (defvar sbt-minor-keymap
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-c s s") 'sbt-switch)
     (define-key map (kbd "C-c s c") 'sbt-compile)
     (define-key map (kbd "C-c s t") 'sbt-test)
+    (define-key map (kbd "C-c s o") 'sbt-test-only-current-test)
     map))
 
 (define-minor-mode sbt-minor-mode "SBT interaction"
