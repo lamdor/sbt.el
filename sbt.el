@@ -73,10 +73,9 @@ see the file `COPYING'.  If not, write to the Free Software Foundation, Inc.,
       (cd root)
       (make-comint-in-buffer buffer-name buffer sbt-program-name)
       (compilation-shell-minor-mode t)
-      (sbt-minor-mode t)
+      (sbt-mode t)
       buffer)))
 
-;; TODO: tab completion
 ;; TODO: (add-hook 'comint-output-filter-functions 'sbt-process-output t t)
 ;; TODO: sbt-hook
 
@@ -139,7 +138,7 @@ see the file `COPYING'.  If not, write to the Free Software Foundation, Inc.,
   (interactive)
   (sbt-command (concat "test-only " (sbt-current-test-in-buffer))))
 
-(defvar sbt-minor-keymap
+(defvar sbt-keymap
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-c s s") 'sbt-switch)
     (define-key map (kbd "C-c s c") 'sbt-compile)
@@ -148,10 +147,20 @@ see the file `COPYING'.  If not, write to the Free Software Foundation, Inc.,
     map))
 
 ;;;###autoload
-(define-minor-mode sbt-minor-mode "SBT interaction"
+(define-minor-mode sbt-mode "SBT interaction"
   :group 'sbt
   :lighter " sbt"
-  :keymap sbt-minor-keymap)
+  :keymap sbt-keymap)
+
+;;;###autoload
+(defun turn-on-sbt-mode ()
+  (interactive)
+  (sbt-mode t))
+
+;;;###autoload
+(defun turn-off-sbt-mode ()
+  (interactive)
+  (sbt-mode nil))
 
 (defcustom sbt-identifying-files '("build.sbt" "project/build.properties")
   "Files at the root of a sbt project that identify it as the root")
