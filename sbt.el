@@ -1,32 +1,36 @@
-;; Support for running sbt in inferior mode.
+;;; sbt.el -- Support for running sbt in inferior mode.
+
+;; Copyright (C) 2012  Luke Amdor
+;; Copyright (C) 2008 Raymond Paul Racine
+
+;; Authors: Luke Amdor <luke.amdor@gmail.com>, Raymond Racine <ray.racine@gmail.com>
+;; Keywords: sbt scala
+;; Version: 0.1
+
+;; This file is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 2, or (at your option)
+;; any later version.
+
+;; This file is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with GNU Emacs; see the file COPYING.  If not, write to
+;; the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+;; Boston, MA 02111-1307, USA.
+
+;;; Commentary
+
+;; See the README.markdown for information on intallation and usage.
 
 (eval-when-compile (require 'cl))
 (require 'tool-bar)
 (require 'compile)
 (require 'comint)
 (require 'unit-test nil t)
-
-(defgroup sbt nil
-  "Run SBT REPL as inferior of Emacs, parse error messages."
-  :group 'tools
-  :group 'processes)
-
-(defconst sbt-copyright    "Copyright (C) 2008 Raymond Paul Racine")
-(defconst sbt-copyright-2  "Portions Copyright (C) Free Software Foundation")
-
-(defconst sbt-authors-name  '("Luke Amdor" "Raymond Racine"))
-(defconst sbt-authors-email '("luke.amdor@gmail.com" "ray.racine@gamail.com"))
-
-(defconst sbt-legal-notice
-  "This is free software; you can redistribute it and/or modify it under the
-terms of the GNU General Public License as published by the Free Software
-Foundation; either version 2, or (at your option) any later version.  This is
-distributed in the hope that it will be useful, but without any warranty;
-without even the implied warranty of merchantability or fitness for a
-particular purpose.  See the GNU General Public License for more details.  You
-should have received a copy of the GNU General Public License along with Emacs;
-see the file `COPYING'.  If not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.")
 
 (defgroup sbt nil
   "Support for sbt build REPL."
