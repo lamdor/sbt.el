@@ -73,23 +73,44 @@ see the file `COPYING'.  If not, write to the Free Software Foundation, Inc.,
       (cd root)
       (make-comint-in-buffer buffer-name buffer sbt-program-name)
       (compilation-shell-minor-mode t)
+      (sbt-minor-mode t)
       buffer)))
 
 ;; TODO: (add-hook 'comint-output-filter-functions 'sbt-process-output t t)
 ;; TODO: tab completion
 ;; TODO: sbt-hook
 
+(defun sbt-find-or-create-buffer ()
+  (let* ((root (sbt-find-path-to-project))
+         (buffer-name (sbt-buffer-name root)))
+    (or (get-buffer buffer-name)
+        (sbt-make-comint root buffer-name))))
+
 (defun sbt ()
   "Launch interactive sbt"
   (interactive)
-  (let* ((root (sbt-find-path-to-project))
-         (buffer-name (sbt-buffer-name root)))
-    (switch-to-buffer (or (get-buffer buffer-name)
-                          (sbt-make-comint root buffer-name)))))
+  (switch-to-buffer (sbt-find-or-create-buffer)))
 
-;; TODO: sbt-command with comint-send-string
+(defun sbt-switch ()
+  "Switch to sbt buffer or back"
+  (interactive)
+  (let ((sbt-buffer (sbt-find-or-create-buffer)))
+    (if (eq (current-buffer) sbt-buffer)
+        (switch-to-buffer (other-buffer))
+      (switch-to-buffer sbt-buffer))))
+
 ;; TODO: keymappings to send test/compile etc
-;; TODO: minor-mode in scala-mode and in sbt comint buffer
+;; TODO: keymapping to run current test
+
+(defvar sbt-minor-keymap
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "C-c s s") 'sbt-switch)
+    map))
+
+(define-minor-mode sbt-minor-mode "SBT interaction"
+  :group 'sbt
+  :lighter " sbt"
+  :keymap sbt-minor-keymap)
 
 (defcustom sbt-identifying-files '("build.sbt" "project/build.properties")
   "Files at the root of a sbt project that identify it as the root")
