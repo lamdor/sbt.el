@@ -2,7 +2,7 @@
 
 ## Getting started ##
 
-There are two main ways to get started with `sbt.el`. Either through [el-get]() or manually
+There are two main ways to get started with `sbt.el`. Either through [el-get](https://github.com/dimitri/el-get) or manually
 
 ### el-get ###
 
