@@ -6,8 +6,6 @@
 (require 'comint)
 (require 'unit-test nil t)
 
-;; TODO: autolaods
-
 (defgroup sbt nil
   "Run SBT REPL as inferior of Emacs, parse error messages."
   :group 'tools
@@ -78,8 +76,8 @@ see the file `COPYING'.  If not, write to the Free Software Foundation, Inc.,
       (sbt-minor-mode t)
       buffer)))
 
-;; TODO: (add-hook 'comint-output-filter-functions 'sbt-process-output t t)
 ;; TODO: tab completion
+;; TODO: (add-hook 'comint-output-filter-functions 'sbt-process-output t t)
 ;; TODO: sbt-hook
 
 (defun sbt-find-or-create-buffer ()
@@ -88,11 +86,13 @@ see the file `COPYING'.  If not, write to the Free Software Foundation, Inc.,
     (or (get-buffer buffer-name)
         (sbt-make-comint root buffer-name))))
 
+;;;###autoload
 (defun sbt ()
   "Launch interactive sbt"
   (interactive)
   (switch-to-buffer (sbt-find-or-create-buffer)))
 
+;;;###autoload
 (defun sbt-switch ()
   "Switch to sbt buffer or back"
   (interactive)
@@ -106,11 +106,13 @@ see the file `COPYING'.  If not, write to the Free Software Foundation, Inc.,
     (switch-to-buffer buffer)
     (comint-send-string (buffer-name buffer) (concat command "\n"))))
 
+;;;###autoload
 (defun sbt-compile ()
   "Switch to sbt buffer and run compile"
   (interactive)
   (sbt-command "compile"))
 
+;;;###autoload
 (defun sbt-test ()
   "Switch to sbt buffer and run compile"
   (interactive)
@@ -145,6 +147,7 @@ see the file `COPYING'.  If not, write to the Free Software Foundation, Inc.,
     (define-key map (kbd "C-c s o") 'sbt-test-only-current-test)
     map))
 
+;;;###autoload
 (define-minor-mode sbt-minor-mode "SBT interaction"
   :group 'sbt
   :lighter " sbt"
