@@ -15,7 +15,7 @@ Add to your emacs init.el/initialization or el-get configuration.
    :description "support for running sbt in inferior mode."
    :type github
    :pkgname "rubbish/sbt.el"
-   :post-init (add-hook 'scala-mode 'turn-on-sbt-mode)))
+   :post-init (add-hook 'scala-mode-hook 'turn-on-sbt-mode)))
 ```
 
 ### Manually ###
@@ -25,7 +25,7 @@ Add to your emacs init.el/initialization or el-get configuration.
 
 ```lisp
 (autoload 'turn-on-sbt-mode "sbt" "" t)
-(add-hook 'scala-mode 'turn-on-sbt-mode)
+(add-hook 'scala-mode-hook 'turn-on-sbt-mode)
 ```
 
 ## Keybindings ##
