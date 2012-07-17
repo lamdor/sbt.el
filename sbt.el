@@ -107,7 +107,7 @@
 (defun sbt-command (command)
   (let ((buffer (sbt-find-or-create-buffer)))
     (switch-to-buffer buffer)
-    (comint-send-string (buffer-name buffer) (concat command "\n"))))
+    (comint-send-string (get-buffer-process buffer) (concat command "\n"))))
 
 ;;;###autoload
 (defun sbt-compile ()
