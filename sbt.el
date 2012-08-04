@@ -129,7 +129,7 @@
                        (re-search-forward "package ")
                        (filter-buffer-substring (point) (point-at-eol))))
            (test-name (progn
-                        (re-search-forward "object ")
+                        (re-search-forward "\\(object\\|class\\) ")
                         (filter-buffer-substring
                          (point)
                          (progn
