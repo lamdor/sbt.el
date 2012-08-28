@@ -111,10 +111,18 @@
     (comint-send-string (get-buffer-process buffer) (concat command "\n"))))
 
 ;;;###autoload
-(defun sbt-compile ()
-  "Switch to sbt buffer and run compile"
+(defun sbt-compile (do-test-compile)
+  "Switch to sbt buffer and run compile (runs test:compile if given prefix)"
+  (interactive "P")
+  (if do-test-compile
+      (sbt-command "test:compile")
+    (sbt-command "compile")))
+
+;;;###autoload
+(defun sbt-run ()
+  "Switch to sbt buffer and run run"
   (interactive)
-  (sbt-command "compile"))
+  (sbt-command "run"))
 
 ;;;###autoload
 (defun sbt-test ()
@@ -147,6 +155,7 @@
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-c s s") 'sbt-switch)
     (define-key map (kbd "C-c s c") 'sbt-compile)
+    (define-key map (kbd "C-c s r") 'sbt-run)
     (define-key map (kbd "C-c s t") 'sbt-test)
     (define-key map (kbd "C-c s o") 'sbt-test-only-current-test)
     map))
@@ -162,7 +171,6 @@
   (interactive)
   (sbt-mode t))
 
-;;;###autoload
 (defun turn-off-sbt-mode ()
   (interactive)
   (sbt-mode nil))
@@ -170,6 +178,7 @@
 (defcustom sbt-identifying-files '("build.sbt" "project/build.properties")
   "Files at the root of a sbt project that identify it as the root")
 
+;;;###autoload
 (defun sbt-find-path-to-project ()
   (car
    (delq nil
