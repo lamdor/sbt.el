@@ -118,7 +118,7 @@
 
 ;;;###autoload
 (defun sbt-test ()
-  "Switch to sbt buffer and run compile"
+  "Switch to sbt buffer and run test"
   (interactive)
   (sbt-command "test"))
 
