@@ -171,6 +171,7 @@
   (interactive)
   (sbt-mode t))
 
+;;;###autoload
 (defun turn-off-sbt-mode ()
   (interactive)
   (sbt-mode nil))
