@@ -42,6 +42,11 @@
   :type 'string
   :group 'sbt)
 
+(defcustom sbt-program-args nil
+  "Arguments to the SBT program invoked by the `run-sbt' command. Must be a list of strings."
+  :type 'sexp
+  :group 'sbt)
+
 (defcustom sbt-use-ui nil
   "Use unit-test to show failure/success in mode line"
   :group 'sbt
@@ -75,7 +80,7 @@
   (let ((buffer (get-buffer-create buffer-name)))
     (with-current-buffer buffer
       (cd root)
-      (make-comint-in-buffer buffer-name buffer sbt-program-name)
+      (eval (append '(make-comint-in-buffer buffer-name buffer sbt-program-name nil) sbt-program-args))
       (compilation-shell-minor-mode t)
       (sbt-mode t)
       buffer)))
