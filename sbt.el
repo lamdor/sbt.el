@@ -71,6 +71,7 @@
          ((string-match "\\[info\\] Total session time" cleaned-output) (sbt-update-ui 'quit))))))
 
 
+
 (defun sbt-buffer-name (path)
   (concat "*sbt:"
           (car (last (butlast (split-string (file-name-as-directory path) "/"))))
@@ -135,6 +136,14 @@
   (interactive)
   (sbt-command "test"))
 
+;;;###autoload
+(defun sbt-publish (do-publish)
+  "Switch to sbt buffer and run publish-local (runs publish if given prefix)"
+  (interactive "P")
+  (if do-publish
+      (sbt-command "publish")
+    (sbt-command "publish-local")))
+
 (defun sbt-current-test-in-buffer ()
   (save-excursion
     (goto-char (point-min))
@@ -163,6 +172,7 @@
     (define-key map (kbd "C-c s r") 'sbt-run)
     (define-key map (kbd "C-c s t") 'sbt-test)
     (define-key map (kbd "C-c s o") 'sbt-test-only-current-test)
+    (define-key map (kbd "C-c s p") 'sbt-publish)
     map))
 
 ;;;###autoload
