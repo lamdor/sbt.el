@@ -191,7 +191,7 @@
   (interactive)
   (sbt-mode nil))
 
-(defcustom sbt-identifying-files '("build.sbt" "project/build.properties")
+(defcustom sbt-identifying-files '("project/build.properties" "build.sbt")
   "Files at the root of a sbt project that identify it as the root")
 
 ;;;###autoload
