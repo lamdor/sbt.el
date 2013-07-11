@@ -124,11 +124,16 @@
       (sbt-command "test:compile")
     (sbt-command "compile")))
 
+(defcustom sbt-run-task "run"
+  "sbt task invoked when the `sbt-run' interactive function is called."
+  :type 'string
+  :group 'sbt)
+
 ;;;###autoload
 (defun sbt-run ()
   "Switch to sbt buffer and run run"
   (interactive)
-  (sbt-command "run"))
+  (sbt-command sbt-run-task))
 
 ;;;###autoload
 (defun sbt-test ()
