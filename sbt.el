@@ -136,6 +136,14 @@
   (sbt-command sbt-run-task))
 
 ;;;###autoload
+(defun sbt-console (do-test-console)
+  "Switch to sbt buffer and run console (runs test:console if given prefix)"
+  (interactive "P")
+  (if do-test-console
+      (sbt-command "test:console")
+    (sbt-command "console")))
+
+;;;###autoload
 (defun sbt-test ()
   "Switch to sbt buffer and run test"
   (interactive)
@@ -174,6 +182,7 @@
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-c s s") 'sbt-switch)
     (define-key map (kbd "C-c s c") 'sbt-compile)
+    (define-key map (kbd "C-c s k") 'sbt-console)
     (define-key map (kbd "C-c s r") 'sbt-run)
     (define-key map (kbd "C-c s t") 'sbt-test)
     (define-key map (kbd "C-c s o") 'sbt-test-only-current-test)
