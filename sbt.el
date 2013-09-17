@@ -121,11 +121,18 @@
           (other-window 1)
           (switch-to-buffer sbt-buffer)))))
 
+(setq sbt-last-command-command nil)
+
 (defun sbt-command (command)
   (let ((buffer (sbt-find-or-create-buffer)))
     (sbt-switch-to-buffer buffer)
     (compilation-forget-errors)
+    (setq sbt-last-command-command command)
     (comint-send-string (get-buffer-process buffer) (concat command "\n"))))
+
+(defun sbt-last-command ()
+  (interactive)
+  (sbt-command sbt-last-command-command))
 
 ;;;###autoload
 (defun sbt-compile (do-test-compile)
@@ -194,6 +201,7 @@
     (define-key map (kbd "C-c s s") 'sbt-switch)
     (define-key map (kbd "C-c s c") 'sbt-compile)
     (define-key map (kbd "C-c s k") 'sbt-console)
+    (define-key map (kbd "C-c s l") 'sbt-last-command)
     (define-key map (kbd "C-c s r") 'sbt-run)
     (define-key map (kbd "C-c s t") 'sbt-test)
     (define-key map (kbd "C-c s o") 'sbt-test-only-current-test)
