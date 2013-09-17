@@ -95,11 +95,18 @@
     (or (get-buffer buffer-name)
         (sbt-make-comint root buffer-name))))
 
+(defun sbt-switch-to-buffer (sbt-buffer)
+  (if (and
+       (get-buffer-window sbt-buffer)
+       (not (eq sbt-buffer (window-buffer))))
+      (switch-to-buffer-other-window sbt-buffer)
+    (switch-to-buffer sbt-buffer)))
+
 ;;;###autoload
 (defun sbt ()
   "Launch interactive sbt"
   (interactive)
-  (switch-to-buffer (sbt-find-or-create-buffer)))
+  (sbt-switch-to-buffer (sbt-find-or-create-buffer)))
 
 ;;;###autoload
 (defun sbt-switch ()
@@ -107,12 +114,16 @@
   (interactive)
   (let ((sbt-buffer (sbt-find-or-create-buffer)))
     (if (eq (current-buffer) sbt-buffer)
-        (switch-to-buffer (other-buffer))
-      (switch-to-buffer sbt-buffer))))
+        (if (one-window-p)
+            (switch-to-buffer (other-buffer))
+          (other-window 1))
+      (if (get-buffer-window sbt-buffer)
+          (other-window 1)
+          (switch-to-buffer sbt-buffer)))))
 
 (defun sbt-command (command)
   (let ((buffer (sbt-find-or-create-buffer)))
-    (switch-to-buffer buffer)
+    (sbt-switch-to-buffer buffer)
     (compilation-forget-errors)
     (comint-send-string (get-buffer-process buffer) (concat command "\n"))))
 
