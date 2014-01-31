@@ -127,6 +127,7 @@
   (let ((buffer (sbt-find-or-create-buffer)))
     (sbt-switch-to-buffer buffer)
     (compilation-forget-errors)
+    (end-of-buffer)
     (setq sbt-last-command-command command)
     (comint-send-string (get-buffer-process buffer) (concat command "\n"))))
 
